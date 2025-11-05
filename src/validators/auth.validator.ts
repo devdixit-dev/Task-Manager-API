@@ -1,0 +1,39 @@
+import Joi from "joi";
+
+export const authRegisterSchema = Joi.object({
+  fullName: Joi.string().trim().min(3).max(30).required().messages({
+    "string.empty": "Name is required",
+    "string.min": "Name should have at least 3 characters",
+    "string:max": "Name should not exceed 30 characters"
+  }),
+  companyName: Joi.string().min(4).max(24).required().messages({
+    "string.min": "Company name should have at least 4 characters",
+    "string.max": "Company name should not exceed 24 characters"
+  }),
+  companyEmail: Joi.string().email().trim().required().messages({
+    "string.email": "Email must be valid",
+    "any.required": "Email is required"
+  }),
+  companyContactNumber: Joi.number().min(10).required().messages({
+    "string.min": "Contact number should have at least 10 numbers"
+  }),
+  password: Joi.string().min(8).required().messages({
+    "string.min": "Password should have at least 8 characters"
+  })
+});
+
+export const authVerify = Joi.object({
+  verificationOTP: Joi.string().trim().min(6).required().messages({
+    "string.min": "Verification OTP should have at least 6 characters"
+  })
+});
+
+export const authLogin = Joi.object({
+  companyEmail: Joi.string().email().trim().required().messages({
+    "string.email": "Email must be valid",
+    "any.required": "Email is required"
+  }),
+  password: Joi.string().min(8).required().messages({
+    "string.min": "Password should have at least 8 characters"
+  })
+});
