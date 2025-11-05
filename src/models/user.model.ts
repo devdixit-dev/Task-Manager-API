@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     default: 'Admin',
-    enum: ['Admin', 'User', 'Developer']
+    enum: ['Admin', 'Developer']
   },
   verificationOTP: {
     type: String,
@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema({
   },
   employees: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Users'
+    ref: 'Employee'
   }]
 });
 
