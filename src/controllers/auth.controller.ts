@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import User from "../models/user.model";
 import bcrypt from 'bcrypt'
+
+import User from "../models/user.model";
 import sendMail from "../services/mailer.service";
 
 export const CheckAuth = (req: Request, res: Response) => {
@@ -60,13 +61,14 @@ export const CompanyRegister = async (req: Request, res: Response) => {
         newone.companyEmail,
         `Task Manager API Verification`,
         `Hello, We welcome you to Task Manager API.
-      Your verification OTP is ${newone.verificationOTP} associated with email ${newone.companyEmail}.`
+        Your verification OTP is ${newone.verificationOTP} associated with email ${newone.companyEmail}.`
       );
     }, 2000);
 
-
-    // add user id in LS
-    localStorage.setItem('v_token', `${newone._id}`);
+    // add user id in cookies
+    res.cookie('v_token', newone._id, {
+      maxAge: 5 * 60 * 1000
+    });
 
     return res.status(201).json({
       success: true,
@@ -85,8 +87,7 @@ export const CompanyRegister = async (req: Request, res: Response) => {
 export const CompanyVerification = async (req: Request, res: Response) => {
   try {
     const { otp } = req.body;
-
-    const token = localStorage.getItem('v_token');
+    const token = req.cookies.v_token
 
     if (!token) {
       return res.status(403).json({
@@ -95,10 +96,7 @@ export const CompanyVerification = async (req: Request, res: Response) => {
       });
     }
 
-    const user = await User.findById(token)
-      .select('-password')
-      .lean();
-
+    const user = await User.findById(token).select('-password').lean();
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -115,9 +113,21 @@ export const CompanyVerification = async (req: Request, res: Response) => {
 
     const verified = await User.findByIdAndUpdate(
       user._id,
-      { isVerified: true },
+      { isVerified: true, verificationOTP: null, isActive: true },
       { new: true }
     ).lean();
+
+    setTimeout(async () => {
+      // send otp to email
+      await sendMail(
+        user.companyEmail,
+        `Task Manager API Verification`,
+        `Hello, We welcome you to Task Manager API.
+        Your verification is done. associated with email ${user.companyEmail}.`
+      );
+    }, 2000);
+
+    res.clearCookie('v_token');
 
     return res.status(200).json({
       success: true,

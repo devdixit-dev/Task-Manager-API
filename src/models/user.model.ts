@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-  fullName: {
+  fullname: {
     type: String,
     trim: true,
     minLength: 3,
@@ -46,7 +46,7 @@ const userSchema = new mongoose.Schema({
   },
   isActive: {
     type: Boolean,
-    default: true
+    default: false
   },
   employees: [{
     type: mongoose.Schema.Types.ObjectId,

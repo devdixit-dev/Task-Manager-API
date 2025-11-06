@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 export const authRegisterSchema = Joi.object({
-  fullName: Joi.string().trim().min(3).max(30).required().messages({
+  fullname: Joi.string().trim().min(3).max(30).required().messages({
     "string.empty": "Name is required",
     "string.min": "Name should have at least 3 characters",
     "string:max": "Name should not exceed 30 characters"
@@ -23,7 +23,7 @@ export const authRegisterSchema = Joi.object({
 });
 
 export const authVerify = Joi.object({
-  verificationOTP: Joi.string().trim().min(6).required().messages({
+  otp: Joi.string().trim().min(6).required().messages({
     "string.min": "Verification OTP should have at least 6 characters"
   })
 });
