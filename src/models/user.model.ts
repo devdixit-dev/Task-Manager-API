@@ -13,7 +13,6 @@ const userSchema = new mongoose.Schema({
     minLength: 4,
     maxLength: 24,
     required: true,
-    unique: true
   },
   companyEmail: {
     type: String,
@@ -38,7 +37,8 @@ const userSchema = new mongoose.Schema({
   verificationOTP: {
     type: String,
     trim: true,
-    minLength: 6
+    minLength: 6,
+    default: null
   },
   isVerified: {
     type: Boolean,
@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Employee'
   }]
-});
+}, {timestamps: true});
 
 const User = mongoose.model('User', userSchema);
 

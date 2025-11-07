@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 
 import User from "../models/user.model";
 import sendMail from "../services/mailer.service";
+import redisClient from "../configs/redis.config";
 
 export const CheckAuth = (req: Request, res: Response) => {
   try {
@@ -29,18 +30,11 @@ export const CompanyRegister = async (req: Request, res: Response) => {
     } = req.body;
 
     const user = await User.findOne({ companyEmail });
-    if (user) {
-      if (!user.isActive) {
-        return res.status(404).json({
-          success: false,
-          message: 'User not found'
-        });
-      } else {
-        return res.status(401).json({
-          success: false,
-          message: 'User already exist'
-        });
-      }
+    if (user && user.isActive) {
+      return res.status(401).json({
+        success: false,
+        message: 'User already exist'
+      });
     }
 
     // hash pass
@@ -51,8 +45,7 @@ export const CompanyRegister = async (req: Request, res: Response) => {
 
     const newone = await User.create({
       fullname, companyName, companyEmail,
-      companyContactNumber, password: hashPassword,
-      verificationOTP: otp
+      companyContactNumber, password: hashPassword
     });
 
     setTimeout(async () => {
@@ -61,7 +54,7 @@ export const CompanyRegister = async (req: Request, res: Response) => {
         newone.companyEmail,
         `Task Manager API Verification`,
         `Hello, We welcome you to Task Manager API.
-        Your verification OTP is ${newone.verificationOTP} associated with email ${newone.companyEmail}.`
+        Your verification OTP is ${otp} associated with email ${newone.companyEmail}.`
       );
     }, 2000);
 
@@ -70,6 +63,9 @@ export const CompanyRegister = async (req: Request, res: Response) => {
       maxAge: 5 * 60 * 1000
     });
 
+    // add user id in redis - expiry in 5 min
+    await redisClient.set(`${newone._id}`, `${otp}`, { EX: 300 });
+    
     return res.status(201).json({
       success: true,
       message: `We sent you the verification otp on your email ${newone.companyEmail} to verify your account.`
@@ -104,7 +100,9 @@ export const CompanyVerification = async (req: Request, res: Response) => {
       });
     }
 
-    if (user.verificationOTP !== otp) {
+    const getOtp = await redisClient.get(`${user._id}`);
+
+    if (getOtp !== String(otp)) {
       return res.status(403).json({
         success: false,
         message: 'Incorrect verification OTP'
