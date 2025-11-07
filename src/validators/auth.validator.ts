@@ -10,11 +10,11 @@ export const authRegisterSchema = Joi.object({
     "string.min": "Company name should have at least 4 characters",
     "string.max": "Company name should not exceed 24 characters"
   }),
-  companyEmail: Joi.string().email().trim().required().messages({
+  email: Joi.string().email().trim().required().messages({
     "string.email": "Email must be valid",
     "any.required": "Email is required"
   }),
-  companyContactNumber: Joi.number().min(10).required().messages({
+  contactNumber: Joi.number().min(10).required().messages({
     "string.min": "Contact number should have at least 10 numbers"
   }),
   password: Joi.string().min(8).required().messages({
@@ -29,11 +29,12 @@ export const authVerify = Joi.object({
 });
 
 export const authLogin = Joi.object({
-  companyEmail: Joi.string().email().trim().required().messages({
+  email: Joi.string().email().trim().required().messages({
     "string.email": "Email must be valid",
     "any.required": "Email is required"
   }),
   password: Joi.string().min(8).required().messages({
     "string.min": "Password should have at least 8 characters"
-  })
+  }),
+  role: Joi.string().required()
 });

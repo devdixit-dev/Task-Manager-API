@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
+
 import { verifyJWT } from "../services/jwt.service";
 import User from "../models/user.model";
+import { JwtPayload } from "jsonwebtoken";
 
 const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
   try{
@@ -19,6 +21,18 @@ const isAuthenticated = async (req: Request, res: Response, next: NextFunction) 
         message: 'Token invalid or expired'
       });
     }
+    
+    const userId = (decoded as JwtPayload).id;
+    const user = await User.findById(userId).lean();
+    if(!user || !user.isActive) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found. Contact your admin'
+      });
+    }
+
+    (req as any).user = user;
+    next();
   }
   catch(err) {
     console.log(`Error in auth middleware - ${err}`);
@@ -28,3 +42,5 @@ const isAuthenticated = async (req: Request, res: Response, next: NextFunction) 
     })
   }
 }
+
+export default isAuthenticated;

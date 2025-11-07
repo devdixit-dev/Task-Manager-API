@@ -6,6 +6,7 @@ import connectDB from "./configs/database.config";
 import Auth from "./routes/auth.route";
 import helmet from "helmet";
 import { connectRedis } from "./configs/redis.config";
+import limiter from "./utils/rateLimit.util";
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -22,7 +23,7 @@ app.use((req, _, next) => {
   next();
 });
 
-app.use('/auth', Auth);
+app.use('/api/auth', limiter, Auth); // 15 min - 100 req
 
 app.get('/', (_, res) => {
   res.send('Home page');

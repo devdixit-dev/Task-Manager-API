@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import bcrypt from 'bcrypt'
 
-import User from "../models/user.model";
 import sendMail from "../services/mailer.service";
 import redisClient from "../configs/redis.config";
+import User from "../models/user.model";
+import { signJWT } from "../services/jwt.service";
 
 export const CheckAuth = (req: Request, res: Response) => {
   try {
@@ -25,11 +26,11 @@ export const CheckAuth = (req: Request, res: Response) => {
 export const CompanyRegister = async (req: Request, res: Response) => {
   try {
     const {
-      fullname, companyName, companyEmail,
-      companyContactNumber, password
+      fullname, companyName, email,
+      contactNumber, password
     } = req.body;
 
-    const user = await User.findOne({ companyEmail });
+    const user = await User.findOne({ email });
     if (user && user.isActive) {
       return res.status(401).json({
         success: false,
@@ -44,17 +45,17 @@ export const CompanyRegister = async (req: Request, res: Response) => {
     const otp = Math.floor(100000 + Math.random() * 900000);
 
     const newone = await User.create({
-      fullname, companyName, companyEmail,
-      companyContactNumber, password: hashPassword
+      fullname, companyName, email, contactNumber, 
+      password: hashPassword, role: 'Admin'
     });
 
     setTimeout(async () => {
       // send otp to email
       await sendMail(
-        newone.companyEmail,
+        newone.email,
         `Task Manager API Verification`,
-        `Hello, We welcome you to Task Manager API.
-        Your verification OTP is ${otp} associated with email ${newone.companyEmail}.`
+        `Hello, We welcome you to Task Manager API as an Admin User.
+        Your verification OTP is ${otp} associated with email ${newone.email}.`
       );
     }, 2000);
 
@@ -68,7 +69,7 @@ export const CompanyRegister = async (req: Request, res: Response) => {
     
     return res.status(201).json({
       success: true,
-      message: `We sent you the verification otp on your email ${newone.companyEmail} to verify your account.`
+      message: `We sent you the verification otp on your email ${newone.email} to verify your account.`
     });
   }
   catch (error) {
@@ -118,10 +119,10 @@ export const CompanyVerification = async (req: Request, res: Response) => {
     setTimeout(async () => {
       // send otp to email
       await sendMail(
-        user.companyEmail,
+        user.email,
         `Task Manager API Verification`,
         `Hello, We welcome you to Task Manager API.
-        Your verification is done. associated with email ${user.companyEmail}.`
+        Your verification is done. associated with email ${user.email}.`
       );
     }, 2000);
 
@@ -142,9 +143,44 @@ export const CompanyVerification = async (req: Request, res: Response) => {
   }
 }
 
-export const Login = (req: Request, res: Response) => {
+export const Login = async (req: Request, res: Response) => {
   try {
+    const { email, password, role } = req.body;
 
+    const user = await User.findOne({ email }).select('+password').lean();
+    if(!user || !user.isActive) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found. Conact your admin'
+      });
+    }
+
+    const matchPass = await bcrypt.compare(password, user.password);
+    if(!matchPass || role !== user.role) {
+      return res.status(403).json({
+        success: false,
+        message: 'Invalid credentials or role'
+      });
+    }
+
+    const payload = {
+      id: user._id,
+      company: user.companyName,
+      role: user.role
+    }
+
+    const token = signJWT(payload);
+
+    res.cookie('a_token', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 30 * 60 * 1000
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Logged in successfully'
+    })
   }
   catch (error) {
     console.log(`Error in company login - ${error}`);
@@ -157,7 +193,15 @@ export const Login = (req: Request, res: Response) => {
 
 export const Logout = (req: Request, res: Response) => {
   try {
+    res.clearCookie('a_token', {
+      httpOnly: true,
+      sameSite: 'lax'
+    });
 
+    return res.status(200).json({
+      success: true,
+      message: 'Logged out successfully'
+    });
   }
   catch (error) {
     console.log(`Error in logout - ${error}`);

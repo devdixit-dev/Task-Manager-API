@@ -14,12 +14,12 @@ const userSchema = new mongoose.Schema({
     maxLength: 24,
     required: true,
   },
-  companyEmail: {
+  email: {
     type: String,
     trim: true,
     required: true
   },
-  companyContactNumber: {
+  contactNumber: {
     type: Number,
     minLength: 10,
     required: true
@@ -27,18 +27,13 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     minLength: 8,
-    required: true
+    required: true,
+    select: false
   },
   role: {
     type: String,
     default: 'Admin',
-    enum: ['Admin', 'Developer']
-  },
-  verificationOTP: {
-    type: String,
-    trim: true,
-    minLength: 6,
-    default: null
+    enum: ['Admin', 'Employee']
   },
   isVerified: {
     type: Boolean,
@@ -47,11 +42,7 @@ const userSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: false
-  },
-  employees: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Employee'
-  }]
+  }
 }, {timestamps: true});
 
 const User = mongoose.model('User', userSchema);
