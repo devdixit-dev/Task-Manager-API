@@ -1,12 +1,14 @@
 import express from "express";
 import 'dotenv/config';
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
 
 import connectDB from "./configs/database.config";
 import Auth from "./routes/auth.route";
-import helmet from "helmet";
 import { connectRedis } from "./configs/redis.config";
 import limiter from "./utils/rateLimit.util";
+import Admin from "./routes/admin.route";
+import { isAdmin, isAuthenticated } from "./middlewares/auth.middleware";
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -24,6 +26,7 @@ app.use((req, _, next) => {
 });
 
 app.use('/api/auth', limiter, Auth); // 15 min - 100 req
+app.use('/api/admin', isAuthenticated, isAdmin, Admin);
 
 app.get('/', (_, res) => {
   res.send('Home page');

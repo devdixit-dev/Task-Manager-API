@@ -4,7 +4,7 @@ import { verifyJWT } from "../services/jwt.service";
 import User from "../models/user.model";
 import { JwtPayload } from "jsonwebtoken";
 
-const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
+export const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
   try{
     const token = req.cookies.a_token;
     if(!token) {
@@ -43,4 +43,24 @@ const isAuthenticated = async (req: Request, res: Response, next: NextFunction) 
   }
 }
 
-export default isAuthenticated;
+export const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
+  try{
+    const user = (req as any).user;
+
+    if(user.role !== 'Admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not allowed for this route'
+      });
+    }
+
+    next();
+  }
+  catch(err) {
+    console.log(`Error in admin middleware - ${err}`);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    })
+  }
+}

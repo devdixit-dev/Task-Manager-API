@@ -1,10 +1,11 @@
 import express from 'express';
 
-import { AddUser } from '../controllers/admin.controller';
-import isAuthenticated from '../middlewares/auth.middleware';
+import { AddUser, AllUsers } from '../controllers/admin.controller';
 
 const Admin = express.Router();
 
-Admin.post('/add-user', isAuthenticated, AddUser);
+Admin.post('/add-user', AddUser);
+
+Admin.get('/all-users', AllUsers);
 
 export default Admin
