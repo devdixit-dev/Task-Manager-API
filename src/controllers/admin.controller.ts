@@ -71,9 +71,9 @@ export const AllUsers = async (req: Request, res: Response) => {
 }
 
 export const UpdateData = async (req: Request, res: Response) => {
-  try{
+  try {
     const id = req.params.id;
-    if(!id) {
+    if (!id) {
       return res.status(404).json({
         success: false,
         message: 'ID not found in params'
@@ -81,27 +81,34 @@ export const UpdateData = async (req: Request, res: Response) => {
     }
 
     const { fullname, email, contactNumber, password } = req.body;
-    const hashPass = await bcrypt.hash(password, 12);
 
-    const updateUserData = await User.findByIdAndUpdate(
-      id,
-      { fullname, email, contactNumber, password: hashPass }
-    ).select('+password');
+    const user = await User.findById(id).select('+password');
+    if(!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Invalid user id or user not found'
+      });
+    }
 
-    setTimeout(async () => {
-      await sendMail(
-        email,
-        `Task Manager API - Update User Info`,
-        `Your information is just updated by your admin ${(req as any).user.fullname}.
-        \n
-        your old email: ${email}, your new email: ${updateUserData?.email}
-        `
-      );
-    }, 2000);
+    const updateFields: Record<string, any> = {};
+
+    if (fullname) updateFields.fullname = fullname;
+    if (email) updateFields.email = email;
+    if (contactNumber) updateFields.contactNumber = contactNumber;
+    if (password) {
+      updateFields.password = await bcrypt.hash(password, 12);
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      user._id,
+      updateFields,
+      { new: true },
+    ).select('-password');
 
     return res.status(200).json({
       success: true,
-      message: "User data updated successfully"
+      message: 'User data updated successfully',
+      update: updatedUser
     });
   }
   catch (err) {
@@ -114,9 +121,9 @@ export const UpdateData = async (req: Request, res: Response) => {
 }
 
 export const DeleteUser = async (req: Request, res: Response) => {
-  try{
+  try {
     const id = req.params.id;
-    if(!id) {
+    if (!id) {
       return res.status(404).json({
         success: false,
         message: 'ID not found in params'
