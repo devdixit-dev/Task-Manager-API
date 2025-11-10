@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 
 import User from "../models/user.model";
 import sendMail from "../services/mailer.service";
+import Task from "../models/task.model";
 
 export const AddUser = async (req: Request, res: Response) => {
   try {
@@ -142,6 +143,27 @@ export const DeleteUser = async (req: Request, res: Response) => {
   }
   catch (err) {
     console.log(`Error in deleting user - ${err}`);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+}
+
+// ALL TASKS
+
+export const GetAllTasks = async (req: Request, res: Response) => {
+  try{
+    const allTasks = await Task.find();
+
+    return res.status(200).json({
+      success: true,
+      message: `Total Tasks - ${allTasks.length}`,
+      tasks: allTasks
+    })
+  }
+  catch(err) {
+    console.log(`Error in getting all tasks admin - ${err}`);
     return res.status(500).json({
       success: false,
       message: 'Internal server error'

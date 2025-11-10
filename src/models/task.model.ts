@@ -23,13 +23,13 @@ const taskSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Pending', 'Completed', 'Cancelled'],
-    default: 'Pending'
+    enum: ['pending', 'completed', 'cancelled'],
+    default: 'pending'
   },
   urgency: {
     type: String,
-    enum: ['Hard', 'Medium', 'Low'],
-    default: 'Medium'
+    enum: ['hard', 'medium', 'low'],
+    default: 'medium'
   },
   done_at: {
     type: String
