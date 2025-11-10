@@ -2,7 +2,6 @@ import express from "express";
 import 'dotenv/config';
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
-// import mongoSanitize from 'express-mongo-sanitize';
 
 import connectDB from "./configs/database.config";
 import Auth from "./routes/auth.route";
@@ -21,7 +20,6 @@ connectRedis();
 app.use(express.json());
 app.use(cookieParser());
 app.use(helmet());
-// app.use(mongoSanitize());
 
 app.use((req, _, next) => {
   console.log(`${req.method} - ${req.url} - ${req.ip}`);
