@@ -163,7 +163,7 @@ export const DeleteUser = async (req: Request, res: Response) => {
 export const GetAllTasks = async (req: Request, res: Response) => {
   try{
     const user = (req as any).user
-    const allTasks = await Task.find({ company: user.companyName });
+    const allTasks = await Task.find({ company: user.companyName }).populate('owner assign_to')
 
     return res.status(200).json({
       success: true,

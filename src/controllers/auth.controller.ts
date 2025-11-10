@@ -174,7 +174,7 @@ export const Login = async (req: Request, res: Response) => {
   }
 }
 
-export const Logout = (req: Request, res: Response) => {
+export const Logout = async (req: Request, res: Response) => {
   try {
     res.clearCookie('a_token', {
       httpOnly: true,
@@ -188,6 +188,52 @@ export const Logout = (req: Request, res: Response) => {
   }
   catch (error) {
     console.log(`Error in logout - ${error}`);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+}
+
+export const ResetPassword = async (req: Request, res: Response) => {
+  try{
+    const user = (req as any).user;
+    const { newPassword } = req.body;
+    if(!newPassword) {
+      return res.status(411).json({
+        success: false,
+        message: 'New password field is required to reset password'
+      });
+    }
+
+    const hashPassword = await bcrypt.hash(newPassword, 12);
+
+    await User.findByIdAndUpdate(
+      user._id,
+      { password: hashPassword },
+      { new: true }
+    ).lean();
+
+    setTimeout(async () => {
+      await sendMail(
+        user.email,
+        `Reset Password`,
+        `You just reset the password.
+        \n
+        New Password: ${newPassword}
+        `
+      );
+    }, 2000);
+
+    res.clearCookie('a_token');
+
+    return res.status(200).json({
+      success: true,
+      message: 'User password reset successfully'
+    });
+  }
+  catch(err) {
+    console.log(`Error in resetting password - ${err}`);
     return res.status(500).json({
       success: false,
       message: 'Internal server error'
