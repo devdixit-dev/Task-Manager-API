@@ -6,23 +6,6 @@ import redisClient from "../configs/redis.config";
 import User from "../models/user.model";
 import { signJWT } from "../services/jwt.service";
 
-export const CheckAuth = (req: Request, res: Response) => {
-  try {
-    return res.status(200).json({
-      success: true,
-      message: "Check auth is working...",
-      uptime: process.uptime()
-    });
-  }
-  catch (error) {
-    console.log(`Error in check auth - ${error}`);
-    return res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-}
-
 export const CompanyRegister = async (req: Request, res: Response) => {
   try {
     const {
