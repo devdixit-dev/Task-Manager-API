@@ -66,8 +66,9 @@ export const UpdateTaskStatus = async (req: Request, res: Response) => {
     const updateStatusField: Record<string, any> = {}
 
     if (status === 'completed') {
+      const date = new Date();
       updateStatusField.status = 'completed',
-      updateStatusField.done_at = `${Date.now}`
+      updateStatusField.done_at = date
     }
     else {
       updateStatusField.status = status,
@@ -110,8 +111,8 @@ export const UpdateTask = async (req: Request, res: Response) => {
     if (!taskId) {
       return res.status(404).json({
         success: false,
-        message: ''
-      })
+        message: 'Task ID not found'
+      });
     }
 
     const updateFields: Record<string, any> = {};
@@ -122,12 +123,19 @@ export const UpdateTask = async (req: Request, res: Response) => {
     if (urgency) updateFields.urgency = urgency;
     if (assign_to) updateFields.assign_to = assign_to;
 
-    const givenTask = await Task.findByIdAndUpdate(
-      taskId,
+    const givenTask = await Task.findOneAndUpdate(
+      { _id: taskId, owner: user._id },
       updateFields,
       { new: true }
     );
 
+    if(!givenTask) {
+      return res.status(404).json({
+        success: false,
+        message: 'Task not found'
+      });
+    }
+ 
     return res.status(200).json({
       success: true,
       message: 'Task info updated',
@@ -155,7 +163,9 @@ export const RemoveTask = async (req: Request, res: Response) => {
       });
     }
 
-    const findTask = await Task.findByIdAndDelete(taskId);
+    const findTask = await Task.findOneAndDelete(
+      { _id: taskId, owner: user._id }
+    );
     if (!findTask) {
       return res.status(404).json({
         success: false,

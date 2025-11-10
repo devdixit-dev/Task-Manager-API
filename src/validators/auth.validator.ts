@@ -6,7 +6,7 @@ export const authRegisterSchema = Joi.object({
     "string.min": "Name should have at least 3 characters",
     "string:max": "Name should not exceed 30 characters"
   }),
-  companyName: Joi.string().min(4).max(24).required().messages({
+  companyName: Joi.string().min(4).max(40).required().messages({
     "string.min": "Company name should have at least 4 characters",
     "string.max": "Company name should not exceed 24 characters"
   }),

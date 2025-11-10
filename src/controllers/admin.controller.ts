@@ -9,9 +9,17 @@ export const AddUser = async (req: Request, res: Response) => {
   try {
     const user = (req as any).user;
 
-    const { fullname, email, contactNumber, role } = req.body;
+    const { fullname, email, password, contactNumber, role } = req.body;
 
-    const hashPass = await bcrypt.hash(`${contactNumber}`, 12);
+    const findUser = await User.findOne({ email });
+    if(findUser) {
+      return res.status(401).json({
+        success: false,
+        message: 'User already exist'
+      });
+    }
+
+    const hashPass = await bcrypt.hash(password, 12);
 
     const newone = await User.create({
       fullname, companyName: user.companyName,
@@ -26,7 +34,7 @@ export const AddUser = async (req: Request, res: Response) => {
         `Welcome to Task Manager API. Your account is created by ${user.fullname}. You can login with the credentials below
         \n
         Email: ${newone.email},
-        password: ${newone.contactNumber}
+        Password: ${password}
         `
       )
     }, 2000);

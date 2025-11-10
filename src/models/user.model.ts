@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
   companyName: {
     type: String,
     minLength: 4,
-    maxLength: 24,
+    maxLength: 40,
     required: true,
   },
   email: {

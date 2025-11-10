@@ -6,14 +6,14 @@ import { AddTask, GetMyTasks, RemoveTask, UpdateTask, UpdateTaskStatus } from '.
 
 const Task = express.Router();
 
-Task.post('/add-task', Validate(addTaskSchema), AddTask);
+Task.post('/add', Validate(addTaskSchema), AddTask);
 
-Task.get('/my-tasks', GetMyTasks);
+Task.get('/my', GetMyTasks);
 
-Task.put('/update-task-status/:id', UpdateTaskStatus);
+Task.put('/update-status/:id', UpdateTaskStatus);
 
-Task.put('/update-task', UpdateTask);
+Task.put('/update/:id', UpdateTask);
 
-Task.delete('/remove-task', RemoveTask);
+Task.delete('/remove/:id', RemoveTask);
 
 export default Task
