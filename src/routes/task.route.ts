@@ -4,16 +4,16 @@ import { Validate } from '../middlewares/validate.middleware';
 import { addTaskSchema } from '../validators/task.validator';
 import { AddTask, GetMyTasks, RemoveTask, UpdateTask, UpdateTaskStatus } from '../controllers/task.controller';
 
-const Task = express.Router();
+const TaskRoute = express.Router();
 
-Task.post('/add', Validate(addTaskSchema), AddTask);
+TaskRoute.post('/add', Validate(addTaskSchema), AddTask);
 
-Task.get('/my', GetMyTasks);
+TaskRoute.get('/my', GetMyTasks);
 
-Task.put('/update-status/:id', UpdateTaskStatus);
+TaskRoute.put('/update-status/:id', UpdateTaskStatus);
 
-Task.put('/update/:id', UpdateTask);
+TaskRoute.put('/update/:id', UpdateTask);
 
-Task.delete('/remove/:id', RemoveTask);
+TaskRoute.delete('/remove/:id', RemoveTask);
 
-export default Task
+export default TaskRoute

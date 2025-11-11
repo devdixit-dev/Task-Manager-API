@@ -5,16 +5,16 @@ import { Validate } from "../middlewares/validate.middleware";
 import { authLogin, authRegisterSchema, authVerify } from "../validators/auth.validator";
 import { isAuthenticated } from "../middlewares/auth.middleware";
 
-const Auth = express();
+const AuthRoute = express();
 
-Auth.post('/register', Validate(authRegisterSchema), CompanyRegister);
+AuthRoute.post('/register', Validate(authRegisterSchema), CompanyRegister);
 
-Auth.put('/verify', Validate(authVerify), CompanyVerification);
+AuthRoute.put('/verify', Validate(authVerify), CompanyVerification);
 
-Auth.post('/login', Validate(authLogin), Login);
+AuthRoute.post('/login', Validate(authLogin), Login);
 
-Auth.post('/logout', isAuthenticated, Logout);
+AuthRoute.post('/logout', isAuthenticated, Logout);
 
-Auth.put('/reset-password', isAuthenticated, ResetPassword);
+AuthRoute.put('/reset-password', isAuthenticated, ResetPassword);
 
-export default Auth;
+export default AuthRoute;

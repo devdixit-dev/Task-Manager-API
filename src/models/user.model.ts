@@ -8,6 +8,11 @@ const userSchema = new mongoose.Schema({
     maxLength: 30,
     required: true
   },
+  avatar: {
+    type: String,
+    default: '',
+    trim: true
+  },
   companyName: {
     type: String,
     minLength: 4,
