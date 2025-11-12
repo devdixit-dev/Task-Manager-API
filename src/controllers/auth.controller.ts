@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import bcrypt from 'bcrypt'
 
-import sendMail from "../services/mailer.service.js";
-import redisClient from "../configs/redis.config.js";
-import User from "../models/user.model.js";
-import { signJWT } from "../services/jwt.service.js";
+import sendMail from "../services/mailer.service";
+import redisClient from "../configs/redis.config";
+import User from "../models/user.model";
+import { signJWT } from "../services/jwt.service";
 
 export const CompanyRegister = async (req: Request, res: Response) => {
   try {

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
-import { verifyJWT } from "../services/jwt.service.js";
-import User from "../models/user.model.js";
+import { verifyJWT } from "../services/jwt.service";
+import User from "../models/user.model";
 import { JwtPayload } from "jsonwebtoken";
 
 export const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {

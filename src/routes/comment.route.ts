@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { AddComment } from '../controllers/comment.controller.js';
+import { AddComment } from '../controllers/comment.controller';
 
 const CommentRoute = express.Router();
 

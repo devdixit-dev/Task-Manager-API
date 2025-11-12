@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import Task from "../models/task.model.js";
+import Task from "../models/task.model";
 
 export const AddComment = async (req: Request, res: Response) => {
   try{

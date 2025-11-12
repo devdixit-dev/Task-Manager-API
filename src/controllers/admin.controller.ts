@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import bcrypt from 'bcrypt';
 
-import User from "../models/user.model.js";
-import sendMail from "../services/mailer.service.js";
-import Task from "../models/task.model.js";
+import User from "../models/user.model";
+import sendMail from "../services/mailer.service";
+import Task from "../models/task.model";
 
 export const AddUser = async (req: Request, res: Response) => {
   try {
