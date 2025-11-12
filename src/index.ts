@@ -4,18 +4,18 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import path from "path";
 
-import connectDB from "./configs/database.config";
-import { connectRedis } from "./configs/redis.config";
+import connectDB from "./configs/database.config.js";
+import { connectRedis } from "./configs/redis.config.js";
 
-import { isAdmin, isAuthenticated } from "./middlewares/auth.middleware";
+import { isAdmin, isAuthenticated } from "./middlewares/auth.middleware.js";
 
-import AuthRoute from "./routes/auth.route";
-import AdminRoute from "./routes/admin.route";
-import TaskRoute from "./routes/task.route";
-import UserRoute from "./routes/user.route";
+import AuthRoute from "./routes/auth.route.js";
+import AdminRoute from "./routes/admin.route.js";
+import TaskRoute from "./routes/task.route.js";
+import UserRoute from "./routes/user.route.js";
 
-import limiter from "./utils/rateLimit.util";
-import CommentRoute from "./routes/comment.route";
+import limiter from "./utils/rateLimit.util.js";
+import CommentRoute from "./routes/comment.route.js";
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -65,3 +65,5 @@ app.get('/', (_, res) => {
 app.listen(port, () => {
   console.log(`SERVER: http://localhost:${port}`);
 });
+
+export default app;

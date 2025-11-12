@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { AddUser, AllUsers, DeleteUser, GetAllTasks, UpdateData } from '../controllers/admin.controller';
+import { AddUser, AllUsers, DeleteUser, GetAllTasks, UpdateData } from '../controllers/admin.controller.js';
 
 const AdminRoute = express.Router();
 

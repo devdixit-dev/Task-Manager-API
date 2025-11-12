@@ -1,7 +1,6 @@
 import express from "express";
-import { isAuthenticated } from "../middlewares/auth.middleware";
-import { UpdateAvatar, UserProfile } from "../controllers/user.controller";
-import upload from "../middlewares/multer.middleware";
+import { UpdateAvatar, UserProfile } from "../controllers/user.controller.js";
+import upload from "../middlewares/multer.middleware.js";
 
 const UserRoute = express.Router();
 

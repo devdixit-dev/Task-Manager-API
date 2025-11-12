@@ -1,8 +1,8 @@
 import express from 'express';
 
-import { Validate } from '../middlewares/validate.middleware';
-import { addTaskSchema } from '../validators/task.validator';
-import { AddTask, GetMyTasks, RemoveTask, UpdateTask, UpdateTaskStatus } from '../controllers/task.controller';
+import { Validate } from '../middlewares/validate.middleware.js';
+import { addTaskSchema } from '../validators/task.validator.js';
+import { AddTask, GetMyTasks, RemoveTask, UpdateTask, UpdateTaskStatus } from '../controllers/task.controller.js';
 
 const TaskRoute = express.Router();
 
