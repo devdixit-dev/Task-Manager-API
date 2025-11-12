@@ -39,7 +39,7 @@ const taskSchema = new mongoose.Schema({
     ref: 'User'
   },
   comments: [{
-    id: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
     },

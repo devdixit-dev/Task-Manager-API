@@ -15,6 +15,7 @@ import TaskRoute from "./routes/task.route";
 import UserRoute from "./routes/user.route";
 
 import limiter from "./utils/rateLimit.util";
+import CommentRoute from "./routes/comment.route";
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -47,6 +48,7 @@ app.use('/api/auth', limiter, AuthRoute); // 15 min - 100 req
 app.use('/api/admin', isAuthenticated, isAdmin, AdminRoute);
 app.use('/api/user', isAuthenticated, UserRoute);
 app.use('/api/task', isAuthenticated, TaskRoute);
+app.use('/api/comment', isAuthenticated, CommentRoute);
 
 app.use((err: any, req: any, res: any, next: any) => {
   const status = err.statusCode || 500;
